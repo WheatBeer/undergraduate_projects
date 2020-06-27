@@ -1,0 +1,310 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : fpu
+Version: H-2013.03-SP5-4
+Date   : Fri Dec 20 14:16:36 2019
+****************************************
+
+Operating Conditions: ff1p16v125c   Library: saed32rvt_ff1p16v125c
+Wire Load Model Mode: enclosed
+
+  Startpoint: b_m_reg[1] (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: tmp_m0_reg[3]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  fpu                35000                 saed32rvt_ff1p16v125c
+  fpu_DW_div_uns_2   16000                 saed32rvt_ff1p16v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  b_m_reg[1]/CLK (DFFARX1_RVT)                            0.00       0.00 r
+  b_m_reg[1]/Q (DFFARX1_RVT)                              0.10       0.10 r
+  div_243/b[1] (fpu_DW_div_uns_2)                         0.00       0.10 r
+  div_243/U1112/Y (INVX1_RVT)                             0.10       0.19 f
+  div_243/U2565/Y (AND3X1_RVT)                            0.05       0.25 f
+  div_243/U2881/Y (AND2X1_RVT)                            0.03       0.27 f
+  div_243/U2874/Y (NAND4X0_RVT)                           0.02       0.29 r
+  div_243/U2646/Y (MUX21X2_RVT)                           0.03       0.32 f
+  div_243/U2604/Y (INVX2_RVT)                             0.01       0.33 r
+  div_243/u_div/u_fa_PartRem_0_45_1/S (FADDX2_RVT)        0.06       0.39 f
+  div_243/U2873/Y (INVX0_RVT)                             0.01       0.40 r
+  div_243/U1058/Y (MUX21X1_RVT)                           0.04       0.43 r
+  div_243/U1057/Y (INVX1_RVT)                             0.01       0.45 f
+  div_243/u_div/u_fa_PartRem_0_44_2/S (FADDX1_RVT)        0.05       0.50 r
+  div_243/U2872/Y (INVX0_RVT)                             0.01       0.51 f
+  div_243/U1020/Y (MUX21X1_RVT)                           0.03       0.54 f
+  div_243/U1014/Y (MUX21X1_RVT)                           0.05       0.58 f
+  div_243/U532/Y (INVX1_RVT)                              0.01       0.60 r
+  div_243/u_div/u_fa_PartRem_0_42_4/CO (FADDX1_RVT)       0.04       0.63 r
+  div_243/U3487/Y (NAND4X0_RVT)                           0.02       0.66 f
+  div_243/U2592/Y (NOR2X1_RVT)                            0.03       0.69 r
+  div_243/U1011/Y (MUX21X2_RVT)                           0.03       0.72 r
+  div_243/U1010/Y (INVX2_RVT)                             0.01       0.73 f
+  div_243/u_div/u_fa_PartRem_0_41_1/S (FADDX2_RVT)        0.06       0.79 r
+  div_243/U3118/Y (INVX0_RVT)                             0.01       0.80 f
+  div_243/U997/Y (MUX21X1_RVT)                            0.03       0.83 f
+  div_243/U996/Y (INVX1_RVT)                              0.02       0.85 r
+  div_243/u_div/u_fa_PartRem_0_40_2/CO (FADDX1_RVT)       0.04       0.89 r
+  div_243/u_div/u_fa_PartRem_0_40_3/CO (FADDX1_RVT)       0.04       0.93 r
+  div_243/u_div/u_fa_PartRem_0_40_4/CO (FADDX1_RVT)       0.04       0.97 r
+  div_243/u_div/u_fa_PartRem_0_40_5/CO (FADDX1_RVT)       0.04       1.01 r
+  div_243/u_div/u_fa_PartRem_0_40_6/CO (FADDX1_RVT)       0.03       1.04 r
+  div_243/U3494/Y (NAND2X0_RVT)                           0.01       1.05 f
+  div_243/U201/Y (IBUFFX4_RVT)                            0.03       1.08 r
+  div_243/U202/Y (INVX2_RVT)                              0.01       1.09 f
+  div_243/U2551/Y (NOR4X1_RVT)                            0.03       1.12 r
+  div_243/U2485/Y (IBUFFX4_RVT)                          -0.10       1.02 f
+  div_243/U2451/Y (IBUFFX4_RVT)                           0.02       1.05 r
+  div_243/U509/Y (INVX1_RVT)                              0.01       1.05 f
+  div_243/U508/Y (INVX1_RVT)                              0.01       1.06 r
+  div_243/U507/Y (MUX21X1_RVT)                            0.03       1.09 f
+  div_243/U897/Y (INVX2_RVT)                              0.01       1.10 r
+  div_243/u_div/u_fa_PartRem_0_39_2/CO (FADDX1_RVT)       0.04       1.14 r
+  div_243/u_div/u_fa_PartRem_0_39_3/CO (FADDX1_RVT)       0.04       1.18 r
+  div_243/u_div/u_fa_PartRem_0_39_4/CO (FADDX1_RVT)       0.04       1.22 r
+  div_243/u_div/u_fa_PartRem_0_39_5/CO (FADDX1_RVT)       0.04       1.26 r
+  div_243/u_div/u_fa_PartRem_0_39_6/CO (FADDX1_RVT)       0.04       1.30 r
+  div_243/u_div/u_fa_PartRem_0_39_7/S (FADDX1_RVT)        0.06       1.35 f
+  div_243/U986/Y (INVX0_RVT)                              0.01       1.36 r
+  div_243/U1001/Y (MUX21X1_RVT)                           0.03       1.39 r
+  div_243/U807/Y (INVX1_RVT)                              0.02       1.41 f
+  div_243/u_div/u_fa_PartRem_0_38_8/CO (FADDX1_RVT)       0.03       1.44 f
+  div_243/U951/Y (AND2X1_RVT)                             0.07       1.50 f
+  div_243/U942/Y (MUX21X1_RVT)                            0.03       1.54 r
+  div_243/U941/Y (INVX1_RVT)                              0.01       1.55 f
+  div_243/u_div/u_fa_PartRem_0_37_1/CO (FADDX1_RVT)       0.03       1.58 f
+  div_243/u_div/u_fa_PartRem_0_37_2/S (FADDX1_RVT)        0.06       1.64 r
+  div_243/U850/Y (INVX1_RVT)                              0.01       1.64 f
+  div_243/U946/Y (MUX21X1_RVT)                            0.03       1.67 f
+  div_243/U1222/Y (MUX21X1_RVT)                           0.04       1.72 f
+  div_243/U1211/Y (MUX21X1_RVT)                           0.06       1.78 f
+  div_243/U868/Y (IBUFFX4_RVT)                            0.01       1.79 r
+  div_243/u_div/u_fa_PartRem_0_34_5/CO (FADDX1_RVT)       0.04       1.83 r
+  div_243/u_div/u_fa_PartRem_0_34_6/CO (FADDX1_RVT)       0.04       1.87 r
+  div_243/u_div/u_fa_PartRem_0_34_7/CO (FADDX1_RVT)       0.04       1.91 r
+  div_243/u_div/u_fa_PartRem_0_34_8/S (FADDX1_RVT)        0.05       1.96 f
+  div_243/U727/Y (IBUFFX4_RVT)                            0.03       1.99 r
+  div_243/U1187/Y (MUX21X1_RVT)                           0.03       2.02 r
+  div_243/U1186/Y (INVX1_RVT)                             0.01       2.04 f
+  div_243/u_div/u_fa_PartRem_0_33_9/S (FADDX1_RVT)        0.05       2.09 r
+  div_243/U49/Y (INVX1_RVT)                               0.01       2.10 f
+  div_243/U48/Y (NBUFFX2_RVT)                             0.02       2.11 f
+  div_243/U1155/Y (MUX21X1_RVT)                           0.03       2.14 f
+  div_243/U1154/Y (INVX1_RVT)                             0.01       2.15 r
+  div_243/u_div/u_fa_PartRem_0_32_10/CO (FADDX1_RVT)      0.03       2.19 r
+  div_243/U1153/Y (IBUFFX4_RVT)                           0.03       2.21 f
+  div_243/U177/Y (IBUFFX4_RVT)                            0.03       2.24 r
+  div_243/u_div/u_fa_PartRem_0_32_11/S (FADDX1_RVT)       0.03       2.27 r
+  div_243/U1183/Y (INVX0_RVT)                            -0.01       2.27 f
+  div_243/U1123/Y (MUX21X1_RVT)                           0.06       2.33 f
+  div_243/U1122/Y (INVX1_RVT)                             0.02       2.35 r
+  div_243/u_div/u_fa_PartRem_0_31_12/CO (FADDX1_RVT)      0.04       2.38 r
+  div_243/U752/Y (INVX1_RVT)                              0.00       2.39 f
+  div_243/U105/Y (IBUFFX8_RVT)                            0.04       2.43 r
+  div_243/U103/Y (INVX16_RVT)                             0.00       2.43 f
+  div_243/U104/Y (IBUFFX4_RVT)                            0.03       2.46 r
+  div_243/u_div/u_fa_PartRem_0_31_13/S (FADDX1_RVT)       0.05       2.52 f
+  div_243/U2919/Y (INVX0_RVT)                             0.01       2.52 r
+  div_243/U1072/Y (MUX21X1_RVT)                           0.03       2.56 r
+  div_243/U526/Y (INVX1_RVT)                              0.01       2.57 f
+  div_243/u_div/u_fa_PartRem_0_30_14/CO (FADDX1_RVT)      0.03       2.61 f
+  div_243/u_div/u_fa_PartRem_0_30_15/CO (FADDX1_RVT)      0.03       2.63 f
+  div_243/U1069/Y (IBUFFX4_RVT)                           0.13       2.76 r
+  div_243/U1068/Y (INVX1_RVT)                             0.01       2.78 f
+  div_243/u_div/u_fa_PartRem_0_30_16/S (FADDX1_RVT)       0.06       2.84 r
+  div_243/U1067/Y (INVX0_RVT)                             0.01       2.85 f
+  div_243/U1117/Y (MUX21X1_RVT)                           0.03       2.88 f
+  div_243/U1347/Y (INVX1_RVT)                             0.01       2.89 r
+  div_243/u_div/u_fa_PartRem_0_29_17/CO (FADDX1_RVT)      0.04       2.93 r
+  div_243/U198/Y (AND3X4_RVT)                             0.05       2.98 r
+  div_243/U1382/Y (MUX21X1_RVT)                           0.03       3.01 r
+  div_243/U2463/Y (IBUFFX16_RVT)                          0.03       3.05 f
+  div_243/u_div/u_fa_PartRem_0_28_18/CO (FADDX1_RVT)      0.03       3.08 f
+  div_243/U2769/Y (NAND2X0_RVT)                           0.03       3.11 r
+  div_243/U1334/Y (INVX2_RVT)                             0.04       3.15 f
+  div_243/U2865/Y (MUX21X1_RVT)                           0.04       3.19 f
+  div_243/U537/Y (INVX1_RVT)                              0.01       3.20 r
+  div_243/U536/Y (INVX0_RVT)                              0.01       3.21 f
+  div_243/U825/Y (IBUFFX4_RVT)                            0.03       3.23 r
+  div_243/u_div/u_fa_PartRem_0_27_19/CO (FADDX1_RVT)      0.03       3.27 r
+  div_243/U1312/Y (AND2X1_RVT)                            0.07       3.34 r
+  div_243/U1256/Y (MUX21X1_RVT)                           0.05       3.38 f
+  div_243/U1255/Y (INVX1_RVT)                             0.01       3.40 r
+  div_243/u_div/u_fa_PartRem_0_26_14/CO (FADDX1_RVT)      0.04       3.44 r
+  div_243/u_div/u_fa_PartRem_0_26_15/CO (FADDX1_RVT)      0.04       3.48 r
+  div_243/u_div/u_fa_PartRem_0_26_16/CO (FADDX1_RVT)      0.04       3.51 r
+  div_243/u_div/u_fa_PartRem_0_26_17/CO (FADDX1_RVT)      0.04       3.55 r
+  div_243/u_div/u_fa_PartRem_0_26_18/CO (FADDX1_RVT)      0.04       3.59 r
+  div_243/u_div/u_fa_PartRem_0_26_19/CO (FADDX1_RVT)      0.04       3.63 r
+  div_243/u_div/u_fa_PartRem_0_26_20/S (FADDX1_RVT)       0.03       3.66 r
+  div_243/U1281/Y (INVX0_RVT)                             0.01       3.67 f
+  div_243/U1463/Y (MUX21X1_RVT)                           0.03       3.70 f
+  div_243/U2863/Y (MUX21X1_RVT)                           0.04       3.74 f
+  div_243/U2739/Y (INVX1_RVT)                             0.06       3.79 r
+  div_243/u_div/u_fa_PartRem_0_24_22/CO (FADDX1_RVT)      0.09       3.89 r
+  div_243/U309/Y (IBUFFX32_RVT)                           0.05       3.94 f
+  div_243/U308/Y (NOR2X4_RVT)                             0.05       3.99 r
+  div_243/U1621/Y (MUX21X1_RVT)                           0.04       4.02 f
+  div_243/U1665/Y (MUX21X1_RVT)                           0.05       4.07 f
+  div_243/U1598/Y (INVX1_RVT)                             0.26       4.33 r
+  div_243/u_div/u_fa_PartRem_0_22_23/CO (FADDX1_RVT)      0.29       4.63 r
+  div_243/U1597/Y (NOR2X0_RVT)                            0.17       4.80 f
+  div_243/U1596/Y (INVX1_RVT)                             0.06       4.86 r
+  div_243/U3252/Y (MUX21X1_RVT)                           0.05       4.90 f
+  div_243/U2750/Y (INVX1_RVT)                             0.01       4.92 r
+  div_243/u_div/u_fa_PartRem_0_21_13/S (FADDX2_RVT)       0.07       4.98 f
+  div_243/U3251/Y (INVX0_RVT)                             0.01       4.99 r
+  div_243/U1539/Y (MUX21X1_RVT)                           0.04       5.03 r
+  div_243/U840/Y (IBUFFX2_RVT)                            0.03       5.06 f
+  div_243/u_div/u_fa_PartRem_0_20_14/S (FADDX2_RVT)       0.06       5.13 r
+  div_243/U492/Y (INVX1_RVT)                              0.01       5.13 f
+  div_243/U1494/Y (MUX21X1_RVT)                           0.04       5.17 f
+  div_243/U1493/Y (INVX1_RVT)                             0.01       5.18 r
+  div_243/U1492/Y (IBUFFX4_RVT)                          -0.14       5.05 f
+  div_243/U1491/Y (INVX4_RVT)                             0.02       5.07 r
+  div_243/u_div/u_fa_PartRem_0_19_15/CO (FADDX1_RVT)      0.08       5.14 r
+  div_243/u_div/u_fa_PartRem_0_19_16/CO (FADDX1_RVT)      0.05       5.19 r
+  div_243/u_div/u_fa_PartRem_0_19_17/CO (FADDX1_RVT)      0.04       5.23 r
+  div_243/u_div/u_fa_PartRem_0_19_18/CO (FADDX1_RVT)      0.04       5.27 r
+  div_243/u_div/u_fa_PartRem_0_19_19/CO (FADDX1_RVT)      0.04       5.31 r
+  div_243/u_div/u_fa_PartRem_0_19_20/CO (FADDX1_RVT)      0.04       5.35 r
+  div_243/u_div/u_fa_PartRem_0_19_21/CO (FADDX1_RVT)      0.04       5.39 r
+  div_243/u_div/u_fa_PartRem_0_19_22/CO (FADDX1_RVT)      0.04       5.43 r
+  div_243/u_div/u_fa_PartRem_0_19_23/CO (FADDX1_RVT)      0.07       5.50 r
+  div_243/U289/Y (NOR2X2_RVT)                             0.06       5.56 f
+  div_243/U335/Y (INVX8_RVT)                              0.01       5.56 r
+  div_243/U458/Y (MUX21X1_RVT)                            0.03       5.60 f
+  div_243/U705/Y (INVX1_RVT)                              0.01       5.61 r
+  div_243/u_div/u_fa_PartRem_0_18_17/CO (FADDX1_RVT)      0.04       5.64 r
+  div_243/u_div/u_fa_PartRem_0_18_18/CO (FADDX1_RVT)      0.04       5.68 r
+  div_243/u_div/u_fa_PartRem_0_18_19/CO (FADDX1_RVT)      0.04       5.72 r
+  div_243/u_div/u_fa_PartRem_0_18_20/CO (FADDX1_RVT)      0.04       5.76 r
+  div_243/u_div/u_fa_PartRem_0_18_21/CO (FADDX1_RVT)      0.04       5.80 r
+  div_243/u_div/u_fa_PartRem_0_18_22/S (FADDX2_RVT)       0.07       5.87 f
+  div_243/U793/Y (MUX21X1_RVT)                            0.07       5.94 f
+  div_243/u_div/u_fa_PartRem_0_17_23/CO (FADDX1_RVT)      0.03       5.98 f
+  div_243/U1673/Y (NOR2X2_RVT)                            0.03       6.01 r
+  div_243/U530/Y (INVX1_RVT)                              0.01       6.02 f
+  div_243/U256/Y (IBUFFX4_RVT)                            0.03       6.05 r
+  div_243/U258/Y (INVX4_RVT)                              0.02       6.07 f
+  div_243/U1867/Y (MUX21X1_RVT)                           0.03       6.10 f
+  div_243/U1866/Y (IBUFFX4_RVT)                           0.07       6.17 r
+  div_243/u_div/u_fa_PartRem_0_16_15/CO (FADDX1_RVT)      0.04       6.21 r
+  div_243/u_div/u_fa_PartRem_0_16_16/S (FADDX1_RVT)       0.07       6.28 f
+  div_243/U1843/Y (INVX0_RVT)                             0.02       6.30 r
+  div_243/U1841/Y (MUX21X1_RVT)                           0.04       6.34 r
+  div_243/U505/Y (INVX0_RVT)                              0.02       6.36 f
+  div_243/u_div/u_fa_PartRem_0_15_17/CO (FADDX1_RVT)      0.03       6.39 f
+  div_243/u_div/u_fa_PartRem_0_15_18/S (FADDX1_RVT)       0.06       6.45 r
+  div_243/U1897/Y (INVX0_RVT)                             0.01       6.45 f
+  div_243/U2098/Y (MUX21X1_RVT)                           0.03       6.49 f
+  div_243/U2100/Y (INVX1_RVT)                             0.02       6.50 r
+  div_243/u_div/u_fa_PartRem_0_14_19/CO (FADDX1_RVT)      0.04       6.55 r
+  div_243/u_div/u_fa_PartRem_0_14_20/CO (FADDX1_RVT)      0.04       6.59 r
+  div_243/U11/Y (INVX1_RVT)                               0.01       6.60 f
+  div_243/U2512/Y (INVX1_RVT)                             0.01       6.61 r
+  div_243/u_div/u_fa_PartRem_0_14_21/CO (FADDX1_RVT)      0.03       6.64 r
+  div_243/u_div/u_fa_PartRem_0_14_22/CO (FADDX1_RVT)      0.04       6.68 r
+  div_243/u_div/u_fa_PartRem_0_14_23/CO (FADDX1_RVT)      0.07       6.75 r
+  div_243/U2557/Y (OR2X1_RVT)                             0.07       6.82 r
+  div_243/U2080/Y (MUX21X1_RVT)                           0.03       6.85 r
+  div_243/U2079/Y (INVX1_RVT)                            -0.01       6.84 f
+  div_243/U50/Y (IBUFFX4_RVT)                             0.06       6.90 r
+  div_243/U51/Y (INVX4_RVT)                               0.01       6.91 f
+  div_243/u_div/u_fa_PartRem_0_13_10/CO (FADDX1_RVT)      0.03       6.94 f
+  div_243/u_div/u_fa_PartRem_0_13_11/CO (FADDX1_RVT)      0.00       6.94 f
+  div_243/u_div/u_fa_PartRem_0_13_12/CO (FADDX1_RVT)      0.04       6.98 f
+  div_243/u_div/u_fa_PartRem_0_13_13/S (FADDX1_RVT)       0.06       7.04 r
+  div_243/U2574/Y (IBUFFX16_RVT)                         -0.04       7.00 f
+  div_243/U2008/Y (MUX21X1_RVT)                           0.03       7.03 f
+  div_243/U2049/Y (MUX21X1_RVT)                           0.06       7.08 f
+  div_243/U2048/Y (INVX1_RVT)                             0.03       7.11 r
+  div_243/u_div/u_fa_PartRem_0_11_15/CO (FADDX1_RVT)      0.06       7.16 r
+  div_243/u_div/u_fa_PartRem_0_11_16/S (FADDX1_RVT)       0.11       7.28 f
+  div_243/U3383/Y (INVX0_RVT)                             0.02       7.29 r
+  div_243/U2238/Y (MUX21X1_RVT)                           0.04       7.34 r
+  div_243/U2237/Y (INVX1_RVT)                             0.01       7.35 f
+  div_243/u_div/u_fa_PartRem_0_10_17/S (FADDX1_RVT)       0.05       7.39 f
+  div_243/U2247/Y (INVX0_RVT)                             0.01       7.40 r
+  div_243/U2179/Y (MUX21X1_RVT)                           0.04       7.44 r
+  div_243/U2181/Y (INVX1_RVT)                             0.02       7.46 f
+  div_243/u_div/u_fa_PartRem_0_9_18/CO (FADDX1_RVT)       0.03       7.49 f
+  div_243/u_div/u_fa_PartRem_0_9_19/CO (FADDX1_RVT)       0.03       7.52 f
+  div_243/u_div/u_fa_PartRem_0_9_20/CO (FADDX1_RVT)       0.03       7.56 f
+  div_243/u_div/u_fa_PartRem_0_9_21/CO (FADDX1_RVT)       0.03       7.59 f
+  div_243/u_div/u_fa_PartRem_0_9_22/CO (FADDX1_RVT)       0.03       7.62 f
+  div_243/U2580/Y (IBUFFX4_RVT)                           0.03       7.65 r
+  div_243/U809/Y (INVX1_RVT)                              0.01       7.66 f
+  div_243/u_div/u_fa_PartRem_0_9_23/CO (FADDX1_RVT)       0.02       7.68 f
+  div_243/U2573/Y (OR2X1_RVT)                             0.06       7.74 f
+  div_243/U2230/Y (MUX21X1_RVT)                           0.03       7.77 r
+  div_243/U563/Y (INVX1_RVT)                              0.02       7.79 f
+  div_243/u_div/u_fa_PartRem_0_8_6/S (FADDX1_RVT)         0.06       7.84 r
+  div_243/U2380/Y (MUX21X1_RVT)                           0.05       7.90 r
+  div_243/u_div/u_fa_PartRem_0_7_7/S (FADDX1_RVT)         1.75       9.64 f
+  div_243/U3070/Y (INVX0_RVT)                             0.24       9.88 r
+  div_243/U3069/Y (MUX21X1_RVT)                          -0.04       9.84 r
+  div_243/U2366/Y (INVX2_RVT)                            -0.07       9.77 f
+  div_243/u_div/u_fa_PartRem_0_6_8/S (FADDX1_RVT)         0.07       9.85 r
+  div_243/U2343/Y (MUX21X1_RVT)                           0.05       9.90 r
+  div_243/u_div/u_fa_PartRem_0_5_9/CO (FADDX1_RVT)        0.07       9.97 r
+  div_243/u_div/u_fa_PartRem_0_5_10/CO (FADDX1_RVT)       0.05      10.02 r
+  div_243/u_div/u_fa_PartRem_0_5_11/CO (FADDX1_RVT)       0.05      10.07 r
+  div_243/u_div/u_fa_PartRem_0_5_12/CO (FADDX1_RVT)       0.05      10.12 r
+  div_243/u_div/u_fa_PartRem_0_5_13/CO (FADDX1_RVT)       0.05      10.17 r
+  div_243/u_div/u_fa_PartRem_0_5_14/S (FADDX1_RVT)        0.03      10.21 r
+  div_243/U45/Y (IBUFFX32_RVT)                            0.04      10.25 f
+  div_243/U44/Y (MUX21X2_RVT)                             0.02      10.27 f
+  div_243/U2302/Y (INVX1_RVT)                             0.02      10.29 r
+  div_243/u_div/u_fa_PartRem_0_4_15/CO (FADDX1_RVT)       0.05      10.34 r
+  div_243/u_div/u_fa_PartRem_0_4_16/CO (FADDX1_RVT)       0.04      10.38 r
+  div_243/u_div/u_fa_PartRem_0_4_17/CO (FADDX1_RVT)       0.04      10.42 r
+  div_243/u_div/u_fa_PartRem_0_4_18/CO (FADDX2_RVT)       0.04      10.46 r
+  div_243/U407/Y (IBUFFX16_RVT)                          -0.54       9.93 f
+  div_243/U408/Y (INVX4_RVT)                              0.02       9.95 r
+  div_243/u_div/u_fa_PartRem_0_4_19/CO (FADDX1_RVT)       0.10      10.05 r
+  div_243/U762/Y (NBUFFX2_RVT)                            0.03      10.08 r
+  div_243/u_div/u_fa_PartRem_0_4_20/CO (FADDX1_RVT)       0.04      10.12 r
+  div_243/U717/Y (INVX1_RVT)                              0.01      10.13 f
+  div_243/U716/Y (INVX1_RVT)                              0.01      10.14 r
+  div_243/U735/Y (INVX1_RVT)                              0.01      10.14 f
+  div_243/U733/Y (INVX1_RVT)                              0.01      10.15 r
+  div_243/u_div/u_fa_PartRem_0_4_21/CO (FADDX1_RVT)       0.03      10.19 r
+  div_243/u_div/u_fa_PartRem_0_4_22/S (FADDX1_RVT)        0.03      10.21 r
+  div_243/U2327/Y (MUX21X1_RVT)                           0.04      10.26 r
+  div_243/U742/Y (INVX1_RVT)                              0.01      10.27 f
+  div_243/U741/Y (INVX1_RVT)                              0.02      10.28 r
+  div_243/u_div/u_fa_PartRem_0_3_23/CO (FADDX1_RVT)       0.04      10.32 r
+  div_243/U777/Y (NOR2X1_RVT)                             0.24      10.56 f
+  div_243/U9/Y (IBUFFX4_RVT)                             -1.82       8.74 r
+  div_243/quotient[3] (fpu_DW_div_uns_2)                  0.00       8.74 r
+  U1494/Y (AO22X1_RVT)                                    0.10       8.84 r
+  U1491/Y (AO221X1_RVT)                                   0.06       8.90 r
+  U1483/Y (OR3X1_RVT)                                     0.03       8.93 r
+  tmp_m0_reg[3]/D (DFFARX1_RVT)                           0.00       8.93 r
+  data arrival time                                                  8.93
+
+  clock clk (rise edge)                                   9.00       9.00
+  clock network delay (ideal)                             0.00       9.00
+  tmp_m0_reg[3]/CLK (DFFARX1_RVT)                         0.00       9.00 r
+  library setup time                                     -0.02       8.98
+  data required time                                                 8.98
+  --------------------------------------------------------------------------
+  data required time                                                 8.98
+  data arrival time                                                 -8.93
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+1

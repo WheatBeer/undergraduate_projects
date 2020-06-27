@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : fpu
+Version: H-2013.03-SP5-4
+Date   : Wed Dec 18 12:57:38 2019
+****************************************
+
+Library(s) Used:
+
+    saed32rvt_ff1p16v125c (File: /data3/Class/DSD/2019_2/2019_2_dsd33/lib/SAED32_EDK/saed32rvt_ff1p16v125c.db)
+
+Number of ports:                          102
+Number of nets:                          3025
+Number of cells:                         2381
+Number of combinational cells:           2008
+Number of sequential cells:               352
+Number of macros/black boxes:               0
+Number of buf/inv:                        290
+Number of references:                      61
+
+Combinational area:              22367.467562
+Buf/Inv area:                     4273.939683
+Noncombinational area:            2438.765880
+Macro/Black Box area:                0.000000
+Net Interconnect area:            5522.826156
+
+Total cell area:                 24806.233442
+Total area:                      30329.059598
+1

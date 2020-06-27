@@ -1,0 +1,413 @@
+module air(rst, power, cooling, dehumidification, ventilation, cl_switch, cl_button, clk, cooler, outdoor_fan, dehumidifier, ventilator, cooling_level, state);
+
+input rst, power, cooling, dehumidification, ventilation, cl_switch, cl_button, clk;
+
+output reg cooler, outdoor_fan, dehumidifier, ventilator;
+
+output reg [2:0] cooling_level;
+
+output reg [2:0] state;
+
+ 
+
+reg [2:0] nextstate;
+
+ 
+
+parameter s_idle = 3'd000;
+
+parameter s_cooling1 = 3'd001;
+
+parameter s_cooling2 = 3'd010;
+
+parameter s_cooling3 = 3'd011;
+
+parameter s_cooling4 = 3'd100;
+
+parameter s_dehumidification = 3'd101;
+
+parameter s_ventilation = 3'd110;
+
+reg coolingup, coolingdown;
+
+reg [2:0] cnt;
+
+integer T1;
+
+ 
+
+ 
+
+ 
+
+always @(negedge clk or rst)
+
+ 
+
+begin
+
+T1 = 3'b100;
+
+if (cl_switch && cl_button)
+
+begin
+
+coolingup <= 1;
+
+coolingdown <= 0;
+
+end
+
+else if (~cl_switch && cl_button)
+
+begin
+
+coolingup <= 0;
+
+coolingdown <= 1;
+
+end
+
+else
+
+begin
+
+coolingup <= 0;
+
+coolingdown <= 0;
+
+end
+
+ 
+
+if(rst)
+
+begin
+
+state <= s_idle;
+
+cnt <= 0;
+
+end
+
+else
+
+begin
+
+state <= nextstate;
+
+ 
+
+end
+
+end
+
+ 
+
+always @(posedge clk)
+
+begin
+
+if(state == s_idle)
+
+begin
+
+ if(rst || ~power)
+
+ nextstate <= state;
+ 
+ else if(power && cooling)
+
+ nextstate <= s_cooling1;
+
+ else if(power && dehumidification)
+
+ nextstate <= s_dehumidification;
+
+ else if(power && ventilation)
+
+ begin
+
+  nextstate <= s_ventilation;
+
+  cnt <= 0;
+
+ end
+
+ else
+
+ nextstate <= state;
+ 
+end
+
+ 
+
+else if(state == s_cooling1)
+
+begin
+
+ if(~power)
+
+ nextstate <= s_idle;
+
+ else if(coolingup)
+
+ nextstate <= s_cooling2;
+
+ else if(dehumidification)
+
+ nextstate <= s_dehumidification;
+
+ else if(ventilation)
+
+ begin
+
+  nextstate <= s_ventilation;
+
+  cnt <= 0;
+
+ end
+
+ else
+
+ nextstate <= state;
+
+end
+
+ 
+
+else if(state == s_cooling2)
+
+begin
+
+ if(~power)
+
+ nextstate <= s_idle;
+
+ else if(coolingup)
+
+ nextstate <= s_cooling3;
+
+ else if(coolingdown)
+
+ nextstate <= s_cooling1;
+
+ else if(dehumidification)
+
+ nextstate <= s_dehumidification;
+
+ else if(ventilation)
+
+ begin
+
+  nextstate <= s_ventilation;
+
+  cnt <= 0;
+
+ end
+
+ else
+
+ nextstate <= state;
+
+end
+
+ 
+
+else if(state == s_cooling3)
+
+begin
+
+ if(~power)
+
+ nextstate <= s_idle;
+
+ else if(coolingup)
+
+ nextstate <= s_cooling4;
+
+ else if(coolingdown)
+
+ nextstate <= s_cooling2;
+
+ else if(dehumidification)
+
+ nextstate <= s_dehumidification;
+
+ else if(ventilation)
+
+ begin
+
+  nextstate <= s_ventilation;
+
+  cnt <= 0;
+
+ end
+
+ else
+
+ nextstate <= state;
+
+end
+
+ 
+
+else if(state == s_cooling4)
+
+begin
+
+ if(~power)
+
+ nextstate <= s_idle;
+
+ else if(coolingdown)
+
+ nextstate <= s_cooling3;
+
+ else if(dehumidification)
+
+ nextstate <= s_dehumidification;
+
+ else if(ventilation)
+
+ begin
+
+  nextstate <= s_ventilation;
+
+  cnt <= 0;
+
+ end
+
+ else
+
+ nextstate <= state;
+
+end
+
+ 
+
+else if(state == s_dehumidification)
+
+begin
+
+ if(~power)
+
+ nextstate <= s_idle;
+
+ else if(cooling)
+
+ nextstate <= s_cooling1;
+
+ else if(ventilation)
+
+ begin
+
+  nextstate <= s_ventilation;
+
+  cnt <= 0;
+
+ end
+
+ else
+
+ nextstate <= state;
+
+end
+
+ 
+
+else if(state == s_ventilation)
+
+begin
+
+ if(~power)
+
+ begin
+
+  nextstate <= s_idle;
+
+  cnt <= 0;
+
+ end
+
+ else if(cooling)
+
+ begin
+
+  nextstate <= s_cooling1;
+
+  cnt <= 0;
+
+end
+
+ else if(dehumidification)
+
+ begin
+
+  nextstate <= s_dehumidification;
+
+  cnt <= 0;
+
+ end
+
+ else 
+
+ begin
+
+  if(cnt == T1)
+
+  begin
+
+   nextstate <= s_idle;
+
+   cnt <= 0;
+
+  end
+
+  else
+
+  begin
+
+   cnt = cnt + 3'b001;
+
+   nextstate <= state;
+
+  end
+
+ end
+
+end
+
+end
+
+ 
+
+always @(state)
+
+begin
+
+case(state)
+
+s_idle : begin cooler = 0; outdoor_fan = 0; dehumidifier = 0; ventilator = 0; cooling_level = 0; end
+
+s_cooling1 : begin cooler = 1; outdoor_fan = 0; dehumidifier = 0; ventilator = 0; cooling_level = 1; end
+
+s_cooling2 : begin cooler = 1; outdoor_fan = 0; dehumidifier = 0; ventilator = 0; cooling_level = 2; end
+
+s_cooling3 : begin cooler = 1; outdoor_fan = 1; dehumidifier = 0; ventilator = 0; cooling_level = 3; end
+
+s_cooling4 : begin cooler = 1; outdoor_fan = 1; dehumidifier = 0; ventilator = 0; cooling_level = 4; end
+
+s_dehumidification : begin cooler = 0; outdoor_fan = 0; dehumidifier = 1; ventilator = 0; cooling_level = 0; end
+
+s_ventilation : begin cooler = 0; outdoor_fan = 0; dehumidifier = 0; ventilator = 1; cooling_level = 0; end
+
+endcase
+
+end
+
+ 
+
+ 
+
+endmodule

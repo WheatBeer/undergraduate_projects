@@ -1,0 +1,73 @@
+module testbench();
+
+reg clock;
+
+reg b_rst, b_power, b_cooling, b_dehumidification, b_ventilation, sw_cl_switch, b_cl_button;
+
+wire cooler, outdoor_fan, dehumidifier, ventilator;
+
+wire [2:0] cooling_level;
+
+wire [2:0] state;
+
+air KSH(b_rst, b_power, b_cooling, b_dehumidification, b_ventilation, sw_cl_switch, b_cl_button, clock, cooler, outdoor_fan, dehumidifier, ventilator, cooling_level, state);
+
+ 
+
+initial
+
+begin 
+
+clock <= 0;
+
+forever #5 clock <= ~clock;
+
+end
+
+ 
+
+initial
+
+$monitor ($time, " state %d : cooler %d, outdoor_fan %d, dehumidifier %d, ventilator %d, cooling_level %d", state, cooler, outdoor_fan, dehumidifier, ventilator, cooling_level);
+
+ 
+
+initial
+
+begin
+
+b_rst <= 1; b_power <= 0; b_cooling <= 0; b_dehumidification <= 0; b_ventilation <= 0; sw_cl_switch <= 0; b_cl_button <= 0;
+
+#10 b_rst <= 0; b_dehumidification <= 1;
+
+#10 b_dehumidification <= 0 ; b_power <= 1;
+
+#10 b_ventilation <= 1;
+
+#10 b_ventilation <= 0;
+
+#20 b_cooling <= 1;
+
+#10 b_cooling <= 0;
+
+#20 sw_cl_switch <= 1; b_cl_button <= 1;
+
+#30 sw_cl_switch <= 0; b_cl_button <= 1;
+
+#20 b_cl_button <= 0; b_dehumidification <= 1;
+
+#10 b_power <= 0;
+
+#10 b_power <= 1; b_dehumidification <= 0; b_ventilation <= 1;
+
+#10 b_ventilation <= 0;
+
+#100 b_ventilation <= 0;
+
+#10 b_power <= 0;
+
+#10 b_rst <= 0;
+
+end
+
+endmodule
