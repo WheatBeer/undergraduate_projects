@@ -1,1 +1,1 @@
-# undergraduate_projects
+# Undergraduate Projects
