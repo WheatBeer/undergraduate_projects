@@ -1,0 +1,422 @@
+
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
+import java.util.Vector;
+
+import javax.swing.*;
+
+public class Window extends JFrame {
+	private static Window frame;
+	
+	public final static int TCP_MESSAGE_PORT	= 3333;
+	public final static int TCP_FILE_PORT 		= 1111;
+	public final static int UDP_MESSAGE_PORT	= 4444;
+	public final static int UDP_FILE_PORT 		= 5555;
+	
+	public final static int UDP_PACKET_SIZE		= 1024;
+	public final static int UDP_PACKET_HEADER	= 24;
+	
+	final static char MESSAGE_HEADER_CONTINUE	= 'C';
+	final static char MESSAGE_HEADER_END		= 'E';
+	final static char MESSAGE_HEADER_FROM 		= 'F';
+	final static char MESSAGE_HEADER_TO 		= 'T';
+	final static char MESSAGE_HEADER_SUBJECT	= 'S';
+	final static char MESSAGE_HEADER_MESSAGE	= 'M';
+	final static char FILE_HEADER_NAME			= 'N';
+	final static char FILE_HEADER_DATA			= 'D';
+	final static char FILE_HEADER_CONTINUE		= 'C';
+	final static char FILE_HEADER_END			= 'E';
+	
+	/* The stuff for the GUI. */
+	private ButtonGroup SelectTrans = new ButtonGroup();
+	private JRadioButton TCP 	= 	new JRadioButton("TCP", true);
+	private JRadioButton UDP 	= 	new JRadioButton("UDP", false);
+	private Button btSend		=	new Button("Send");
+	private Button btClear		=	new Button("Clear");
+	private Button btQuit		=	new Button("Quit");
+	private Label serverLabel	=	new Label("Mail Server IP :");
+	private TextField serverField=	new TextField("", 40);
+	private Label toLabel		=	new Label("                   To : ");
+	private TextField toField	=	new TextField("", 40);
+	private Label fromLabel		=	new Label("              From : ");
+	private TextField fromField	=	new TextField("", 40);
+	private Label subjectLabel	=	new Label("          Subject : ");
+	private TextField subjectField=	new TextField("", 40);
+	private Label messageLabel	=	new Label("Message : ");
+	private TextArea messageText=	new TextArea(10, 40);
+	class FileLoc
+	{
+		public String path;
+		public String fileName;
+		
+		public FileLoc()
+		{
+			path = null;
+			fileName = null;
+		}
+	};
+	private Label fileLabel	=	new Label("File : ");
+	private Button fileAttach		=	new Button("Attach");
+	private TextArea fileText=	new TextArea(5, 40);
+	private Vector<FileLoc> files = new Vector<FileLoc>();
+
+    /**
+     * Create a new MailClient window with fields for entering all
+     * the relevant information (From, To, Subject, and message).
+     */
+    private Window() {
+		super("Mailclient");
+		
+		SelectTrans.add(TCP);
+		SelectTrans.add(UDP);
+		Panel selectTransPanel = new Panel(new BorderLayout());
+		selectTransPanel.add(TCP, BorderLayout.WEST);
+		selectTransPanel.add(UDP, BorderLayout.CENTER);
+		Panel serverPanel = new Panel(new BorderLayout());
+		Panel fromPanel = new Panel(new BorderLayout());
+		Panel toPanel = new Panel(new BorderLayout());
+		Panel subjectPanel = new Panel(new BorderLayout());
+		Panel messagePanel = new Panel(new BorderLayout());
+		serverPanel.add(serverLabel, BorderLayout.WEST);
+		serverPanel.add(serverField, BorderLayout.CENTER);
+		fromPanel.add(fromLabel, BorderLayout.WEST);
+		fromPanel.add(fromField, BorderLayout.CENTER);
+		toPanel.add(toLabel, BorderLayout.WEST);
+		toPanel.add(toField, BorderLayout.CENTER);
+		subjectPanel.add(subjectLabel, BorderLayout.WEST);
+		subjectPanel.add(subjectField, BorderLayout.CENTER);
+		messagePanel.add(messageLabel, BorderLayout.NORTH);	
+		messagePanel.add(messageText, BorderLayout.CENTER);
+		Panel fieldPanel = new Panel(new GridLayout(0, 1));
+		fieldPanel.add(selectTransPanel);
+		fieldPanel.add(serverPanel);
+		fieldPanel.add(fromPanel);
+		fieldPanel.add(toPanel);
+		fieldPanel.add(subjectPanel);
+		
+		Panel filePanel = new Panel(new BorderLayout());
+		Panel fileButtonPanel = new Panel(new GridLayout(1, 0));
+		fileButtonPanel.add(fileLabel);
+		fileAttach.addActionListener(new AttachListener());
+		fileButtonPanel.add(fileAttach);
+		
+		filePanel.add(fileButtonPanel, BorderLayout.NORTH);
+		filePanel.add(fileText, BorderLayout.CENTER);
+		
+		/* Create a panel for the buttons and add listeners to the
+		   buttons. */
+		Panel buttonPanel = new Panel(new GridLayout(1, 0));
+		btSend.addActionListener(new SendListener());
+		btClear.addActionListener(new ClearListener());
+		btQuit.addActionListener(new QuitListener());
+		buttonPanel.add(btSend);
+		buttonPanel.add(btClear);
+		buttonPanel.add(btQuit);
+		
+		filePanel.add(buttonPanel, BorderLayout.SOUTH);
+		
+		/* Add, pack, and show. */
+		add(fieldPanel, BorderLayout.NORTH);
+		add(messagePanel, BorderLayout.CENTER);
+		add(filePanel, BorderLayout.SOUTH);
+		pack();
+		show();
+		
+		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+    }
+
+    static public void main(String argv[]) {
+    	frame = new Window();
+    }
+    
+    static Window getFrame()
+    {
+    	return frame;
+    }
+    public void newFile(FileLoc file)
+    {
+    	files.add(file);
+    	fileText.setText(fileText.getText() + file.path + file.fileName + "\n");
+    }
+
+    /* Handler for the Send-button. */
+    class SendListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+		    System.out.println("Sending mail");
+		    
+		    /* Check that we have the local mailserver */
+		    if ((serverField.getText()).equals("")) {
+				System.out.println("Need name of local mailserver!");
+				return;
+		    }
+	
+		    /* Check that we have the sender and recipient. */
+		    if((fromField.getText()).equals("")) {
+				System.out.println("Need sender!");
+				return;
+		    }
+		    if((toField.getText()).equals("")) {
+				System.out.println("Need recipient!");
+				return;
+		    }
+		    
+		    if(TCP.isSelected())
+		    	SendTCP();
+		    else
+		    	SendUDP();
+
+		    System.out.println("Mail sent succesfully!");
+		}
+    }
+    
+    void SendTCP()
+    {
+	    Socket connection = null;
+	    BufferedReader fromServer = null;
+	    DataOutputStream toServer = null;
+	    try {
+	    	connection = new Socket(serverField.getText(), TCP_MESSAGE_PORT);
+	    	fromServer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	    	toServer = new DataOutputStream(connection.getOutputStream());
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			toServer.writeBytes(toField.getText() + "\r\n");
+			toServer.writeBytes(fromField.getText()+ "\r\n");
+			toServer.writeBytes(subjectField.getText()+ "\r\n");
+			toServer.writeBytes(messageText.getText()+ "\r\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    try {
+			connection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		FileLoc fl = new FileLoc();
+		fl.fileName = "\\";
+		files.add(fl);
+		for(int i = 0; i < files.size(); ++i)
+		{
+			String fileName = files.get(i).path + files.get(i).fileName;
+			try {
+				connection = new Socket(serverField.getText(), TCP_FILE_PORT);
+				BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+			    bw.write(files.get(i).fileName+"\n");
+			    bw.flush();
+
+			    if(files.get(i).fileName != "\\")
+			    {
+				    DataInputStream dis = new DataInputStream(new FileInputStream(new File(fileName)));
+					DataOutputStream dos=new DataOutputStream(connection.getOutputStream());
+					
+					int b=0;
+					while( (b=dis.read()) != -1 ){
+						dos.writeByte(b);
+						dos.flush();
+					}
+					dis.close();
+					dos.close();
+			    }
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	    try {
+			connection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    void SendUDP()
+    {
+    	SendUDP(UDP_MESSAGE_PORT, fromField.getText(), MESSAGE_HEADER_FROM+"");
+    	SendUDP(UDP_MESSAGE_PORT, toField.getText(), MESSAGE_HEADER_TO+"");
+    	SendUDP(UDP_MESSAGE_PORT, subjectField.getText(), MESSAGE_HEADER_SUBJECT+"");
+    	SendUDP(UDP_MESSAGE_PORT, messageText.getText(), MESSAGE_HEADER_MESSAGE+"");
+    	SendUDP(UDP_MESSAGE_PORT, "\n", MESSAGE_HEADER_END+"");
+    	
+    	for(int i = 0; i < files.size(); ++i)
+		{
+			String fileName = files.get(i).path + files.get(i).fileName;
+			SendUDP(UDP_FILE_PORT, files.get(i).fileName, FILE_HEADER_NAME+"");
+			try {
+				DataInputStream dis = new DataInputStream(new FileInputStream(new File(fileName)));
+				byte[] tmp = new byte[UDP_PACKET_SIZE - UDP_PACKET_HEADER];
+				int b = 0;
+				int j = 0;
+				
+				while( true ){
+					if((b=dis.read()) == -1)
+					{
+						byte[] tmp2 = new byte[j];
+						for(int k = 0; k < tmp2.length; ++k)
+							tmp2[k] = tmp[k];
+
+						SendUDP(UDP_FILE_PORT, tmp2, FILE_HEADER_DATA+"");
+						break;
+					}
+
+					tmp[j] = (byte)b;
+					if(++j >= UDP_PACKET_SIZE - UDP_PACKET_HEADER)
+					{
+						j = 0;
+						SendUDP(UDP_FILE_PORT, tmp, FILE_HEADER_DATA+"");
+						tmp = new byte[UDP_PACKET_SIZE - UDP_PACKET_HEADER];
+					}
+				}
+				
+				dis.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    	SendUDP(UDP_FILE_PORT, " ", FILE_HEADER_END+"");
+    }
+
+    void SendUDP(int port, String data, String header)
+    {
+    	DatagramSocket connection;
+		try {
+			connection = new DatagramSocket();
+			InetAddress IPAddress = InetAddress.getByName(serverField.getText());
+			DatagramPacket packet;
+			int idx = 0;
+			int length = data.length();
+			while(idx < length)
+			{
+				byte[] header_data = header.getBytes();
+				byte[] byte_data = new byte[Math.min(1000, length - idx)];
+				byte[] packet_data = new byte[UDP_PACKET_HEADER + Math.min(1000, length - idx)];
+				int data_size = Math.min(idx +1000, length);
+				for(int i = 0; idx < data_size; ++idx)
+				{
+					byte_data[i++] = (byte)data.charAt(idx);
+				}
+
+				for(int i = 0; i < header_data.length; ++i)
+				{
+					packet_data[i] = header_data[i];
+				}
+				
+				// packet_data[]
+				for(int i = 0; i < byte_data.length; ++i)
+				{
+					packet_data[i+UDP_PACKET_HEADER] = byte_data[i];
+				}
+
+				packet = new DatagramPacket(packet_data, packet_data.length, IPAddress, port);
+				connection.send(packet);
+
+			}
+			connection.close();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    void SendUDP(int port, byte[] data, String header)
+    {
+    	DatagramSocket connection;
+		try {
+			connection = new DatagramSocket();
+			InetAddress IPAddress = InetAddress.getByName(serverField.getText());
+			DatagramPacket packet;
+			int idx = 0;
+			int length = data.length;
+			while(idx < length)
+			{
+				byte[] header_data = header.getBytes();
+				byte[] byte_data = new byte[Math.min(1000, length - idx)];
+				byte[] packet_data = new byte[UDP_PACKET_HEADER + Math.min(1000, length - idx)];
+				int data_size = Math.min(idx +1000, length);
+				for(int i = 0; idx < data_size; ++idx)
+				{
+					byte_data[i++] = data[idx];
+				}
+
+				for(int i = 0; i < header_data.length; ++i)
+				{
+					packet_data[i] = header_data[i];
+				}
+				
+				// packet_data[]
+				for(int i = 0; i < byte_data.length; ++i)
+				{
+					packet_data[i+UDP_PACKET_HEADER] = byte_data[i];
+				}
+
+				packet = new DatagramPacket(packet_data, packet_data.length, IPAddress, port);
+				connection.send(packet);
+
+			}
+			connection.close();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    /* Clear the fields on the GUI. */
+    class ClearListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+		    System.out.println("Clearing fields");
+		    fromField.setText("");
+		    toField.setText("");
+		    subjectField.setText("");
+		    messageText.setText("");
+		}
+    }
+
+    /* Quit. */
+    class QuitListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+		    System.exit(0);
+		}
+    }
+    
+    class AttachListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			FileDialog fd;
+
+			fd = new FileDialog(Window.getFrame(),"",FileDialog.LOAD);
+			fd.setVisible(true);
+			
+			Window.FileLoc file = new Window.FileLoc();
+			file.fileName = fd.getFile();
+			file.path = fd.getDirectory();
+			
+			Window.getFrame().newFile(file);
+		}
+    }
+}

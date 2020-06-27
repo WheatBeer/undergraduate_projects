@@ -1,0 +1,28 @@
+package client;
+
+import java.net.*;
+import java.io.*;
+
+public class DatagramEchoClient {
+	public static void main(String[] args) throws Exception {
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		
+		DatagramSocket ds = new DatagramSocket();
+		InetAddress ia = InetAddress.getByName("127.0.0.1");
+		System.out.print("송신: ");
+		String tmp = null;
+		while ((tmp = in.readLine()) != null) {
+		
+		byte buf[] = tmp.getBytes();
+		DatagramPacket dp = new DatagramPacket(buf, buf.length, ia, 5555);
+		ds.send(dp);
+		System.out.println("ok");
+		DatagramPacket dp1 = new DatagramPacket(buf, buf.length);
+		ds.receive(dp1);
+		System.out.println("ok");
+		String tmp1 = new String(dp1.getData());
+		System.out.print("수신 : " + tmp1);
+		}
+		
+	}
+}

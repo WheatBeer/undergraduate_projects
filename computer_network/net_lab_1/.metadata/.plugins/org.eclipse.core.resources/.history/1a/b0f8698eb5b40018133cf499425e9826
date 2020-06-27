@@ -1,0 +1,38 @@
+package server;
+
+import java.io.*;
+import java.net.*;
+
+public class EchoServer {
+	public static void main(String[] args) {
+		ServerSocket ss; // 서버 소켓
+		Socket sc; // 클라이언트
+		BufferedReader in; // 서버로의 입력
+		PrintWriter out; // 클라이언트로의 출력
+		String inLine;
+
+		try {
+			// 포트 번호로 4444를 사용하는 ServerSocket을 생성
+			ss = new ServerSocket(5000);
+			// 클라이언트의 접속을 기다림
+			sc = ss.accept();
+			System.out.println(sc.getInetAddress() + "와(과) 연결되었습니다.");
+			// 입출력 스트림을 얻음
+			in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
+			out = new PrintWriter(sc.getOutputStream(), true);
+
+			while ((inLine = in.readLine()) != null) { // 데이터를 읽어 들임
+				System.out.println("수신: " + inLine);
+				out.println(inLine); // 서버로 전송
+				System.out.println("송신: " + inLine);
+			}
+
+			// 소켓, 스트림, 서버 소켓을 닫는다. in.close();
+			out.close();
+			sc.close();
+			ss.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+}

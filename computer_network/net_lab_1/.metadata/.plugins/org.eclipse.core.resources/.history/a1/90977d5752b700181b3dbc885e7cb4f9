@@ -1,0 +1,363 @@
+package smpt_server;
+
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.*;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JRadioButton;
+
+
+public class Server extends JFrame {
+
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public final static int TCP_MESSAGE_PORT	= 3333;
+	public final static int TCP_FILE_PORT 		= 1111;
+	public final static int UDP_MESSAGE_PORT	= 4444;
+	public final static int UDP_FILE_PORT 		= 5555;
+	
+	public final static int UDP_PACKET_SIZE		= 1024;
+	public final static int UDP_PACKET_HEADER	= 24;
+	
+	private ButtonGroup SelectTrans = new ButtonGroup();
+	private JRadioButton TCP 	= 	new JRadioButton("TCP", true);
+	private JRadioButton UDP 	= 	new JRadioButton("UDP", false);
+	private Button listenButton		=	new Button("Listen");
+	
+	public static String from;
+	public static String to;
+	public static String subject;
+	public static String message;
+	public static Vector<String> files = new Vector<String>();
+	
+	public static boolean message_OK = false;
+	public static boolean file_OK = false;
+	
+	Thread messageThread = null;
+	Thread fileThread = null;
+	
+	ServerSocket TCP_messageSock = null;
+	ServerSocket TCP_fileSock = null;
+	DatagramSocket UDP_messageSock = null;
+	DatagramSocket UDP_fileSock = null;
+	
+	final static char MESSAGE_HEADER_CONTINUE	= 'C';
+	final static char MESSAGE_HEADER_END		= 'E';
+	final static char MESSAGE_HEADER_FROM 		= 'F';
+	final static char MESSAGE_HEADER_TO 		= 'T';
+	final static char MESSAGE_HEADER_SUBJECT	= 'S';
+	final static char MESSAGE_HEADER_MESSAGE	= 'M';
+	final static char FILE_HEADER_NAME			= 'N';
+	final static char FILE_HEADER_DATA			= 'D';
+	final static char FILE_HEADER_CONTINUE		= 'C';
+	final static char FILE_HEADER_END			= 'E';
+	
+	class TCPMessageThread extends Thread
+	{
+		public void run()
+		{
+			while(true)
+			{
+				Socket s = null;
+				try {
+					s = TCP_messageSock.accept();
+					InputStream input = s.getInputStream();
+					BufferedReader read = new BufferedReader(new InputStreamReader(input));
+					System.out.println("IP : " + s.getInetAddress()); // IP 받기
+					System.out.println("Message PORT : " + s.getPort()); // 메세지포트넘버 받기
+					
+					to = read.readLine();
+					from = read.readLine();
+					subject = read.readLine();
+					message = "";
+					String line = null;
+					while((line = read.readLine()) != null)
+					{
+						message += (line + "\r\n");
+					}
+					
+					message_OK = true;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					break;
+				}
+			}
+		}
+	}
+	class TCPFileThread extends Thread
+	{
+		public void run()
+		{
+			while(true)
+			{
+				Socket s = null;
+				try {
+					s = TCP_fileSock.accept();
+					System.out.println("File PORT : " + s.getPort()); //파일포트넘버 받기
+					
+					InputStream input = s.getInputStream();
+					BufferedReader read = new BufferedReader(new InputStreamReader(input));
+					
+					String fileName=read.readLine();
+					
+					if(fileName.compareTo("\\") == 0)
+					{
+						System.out.println("O");
+						file_OK = true;
+					}
+					else
+					{
+						
+						System.out.println("File Name : " + fileName); //파일이름
+						System.out.println("File Name Length : " + fileName.length()); //파일이름길이
+						 
+						files.add(fileName);
+						FileOutputStream out=new FileOutputStream(fileName);
+				
+						int i=0; 
+						int count = 0; // 파일사이즈 카운트 
+						while((i=input.read())!=-1)
+						{
+							out.write((char)i);
+							count++;
+						}
+						System.out.println("File Size : " + count + "Bytes" ); //파일사이즈
+						out.close();
+					}
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	class UDPMessageThread extends Thread
+	{
+		private static final int FROM		= 1;
+		private static final int TO			= 2;
+		private static final int SUBJECT	= 3;
+		private static final int MESSAGE	= 4;
+		private int stat = 0;
+		public void run()
+		{
+			while(true)
+			{
+				byte[] buffer = new byte[UDP_PACKET_SIZE];
+				DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+				try {
+					UDP_messageSock.receive(receivePacket);
+					InetAddress ia = receivePacket.getAddress();
+					System.out.println(ia + "와(과) 연결되었습니다."); //IP 받기 
+					int portnum = receivePacket.getPort();
+					System.out.println("Message PORT : " + portnum); //메세지포트넘버 받기 
+					byte[] packetData = receivePacket.getData();
+					char type = (char)packetData[0];
+					switch(type)
+					{
+					case MESSAGE_HEADER_FROM:
+						from = "";
+						stat = FROM;
+						break;
+					case MESSAGE_HEADER_TO:
+						to = "";
+						stat = TO;
+						break;
+					case MESSAGE_HEADER_SUBJECT:
+						subject = "";
+						stat = SUBJECT;
+						break;
+					case MESSAGE_HEADER_MESSAGE:
+						message = "";
+						stat = MESSAGE;
+						break;
+					}
+					String data = new String(packetData);
+					data = data.substring(UDP_PACKET_HEADER, data.length());
+					switch(stat)
+					{
+						case FROM:
+							from += data;
+							break;
+						case TO:
+							to += data;
+							break;
+						case SUBJECT:
+							subject += data;
+							break;
+						case MESSAGE:
+							message += data;
+							break;
+					}
+
+					if(type == MESSAGE_HEADER_END)
+						message_OK = true;
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					break;
+				}
+			}
+		}
+	}
+	class UDPFileThread extends Thread
+	{
+		public void run()
+		{
+			FileOutputStream out=null;
+			int count = 0;// 파일사이즈 카운트 
+			while(true)
+			{
+				byte[] buffer = new byte[UDP_PACKET_SIZE];
+				DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+				
+				try {
+					UDP_fileSock.receive(receivePacket);
+					int portnum = receivePacket.getPort();
+					System.out.println("File PORT : " + portnum); //파일포트넘버 받기
+					byte[] packetData = receivePacket.getData();
+					
+					char type = (char)packetData[0];
+					if(type == FILE_HEADER_END)
+					{
+						file_OK = true;
+						out.close();
+						System.out.println("File Size : " + count + "Bytes" ); //파일사이즈
+						continue;
+					}
+					
+					if(type == FILE_HEADER_NAME)
+					{
+						String fileName = "";
+						for(int i = UDP_PACKET_HEADER; i < packetData.length; ++i)
+						{
+							if(packetData[i] == 0)
+								break;
+							fileName += (char)packetData[i];
+						}
+
+						if(out != null)
+							out.close();
+						out=new FileOutputStream(fileName);
+						files.add(fileName);
+						System.out.println("File Name : " + fileName); //파일이름
+						System.out.println("File Name Length : " + fileName.length()); //파일이름길이
+					}
+					else
+					{ 
+						for(int i = UDP_PACKET_HEADER; i < packetData.length; ++i)
+						{
+							if(receivePacket.getLength() -1 < i ) {
+								break;
+							}
+							out.write(packetData[i]);
+							count++;
+						}
+						 
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					break;
+				}
+			}
+			
+		}		
+	};
+	public Server()
+	{
+		super("Mailserver");
+		SelectTrans.add(TCP);
+		SelectTrans.add(UDP);
+		Panel selectTransPanel = new Panel(new BorderLayout());
+		selectTransPanel.add(TCP, BorderLayout.WEST);
+		selectTransPanel.add(UDP, BorderLayout.CENTER);
+		listenButton.addActionListener(new ListenListener());
+		add(selectTransPanel, BorderLayout.NORTH);
+		add(listenButton, BorderLayout.SOUTH);
+		pack();
+		show();
+		
+		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+	}
+	
+    class ListenListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {	
+			try
+			{
+				if(TCP_messageSock == null)
+		    	{
+		    		TCP_messageSock = new ServerSocket(TCP_MESSAGE_PORT);
+		    	}
+		    	if(TCP_fileSock == null)
+		    	{
+					TCP_fileSock = new ServerSocket(TCP_FILE_PORT);
+		    	}
+		    	if(UDP_messageSock == null)
+		    	{
+		    		UDP_messageSock = new DatagramSocket(UDP_MESSAGE_PORT);
+		    	}
+		    	if(UDP_fileSock == null)
+		    	{
+		    		UDP_fileSock = new DatagramSocket(UDP_FILE_PORT);
+		    	}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	    	
+			if(TCP.isSelected())
+			{
+				messageThread = new TCPMessageThread();
+				fileThread = new TCPFileThread();
+			}
+			else
+			{
+				messageThread = new UDPMessageThread();
+				fileThread = new UDPFileThread();
+			}
+			messageThread.start();
+			fileThread.start();
+		}
+    }
+	
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		
+		new Server();
+
+		while(true)
+		{
+			if(message_OK && file_OK)
+			{
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Message window = new Message(from, to, subject, message, files);
+				message_OK = false;
+				file_OK = false;
+				files.clear();
+				break;
+			}
+		}
+	}
+
+}
